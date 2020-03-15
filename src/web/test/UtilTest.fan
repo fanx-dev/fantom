@@ -23,13 +23,13 @@ class UtilTest : Test
     verifyEq(WebUtil.isToken("foo;bar"), false)
 
     // test https://tools.ietf.org/html/rfc7230#section-3.2.6
-    chars := Int:Bool[:] { def = false }
+    chars := Int:Bool[:] //{ def = false }
     ('0'..'9').each |c| { chars[c] = true }
     ('a'..'z').each |c| { chars[c] = true }
     ('A'..'Z').each |c| { chars[c] = true }
     "!#\$%&'*+-.^_`|~".each |c| { chars[c] = true }
     for (c:=0; c<130; ++c)
-      verifyEq(WebUtil.isTokenChar(c), chars[c])
+      verifyEq(WebUtil.isTokenChar(c), chars[c] == true)
   }
 
   Void testToQuotedStr()
@@ -76,7 +76,7 @@ class UtilTest : Test
       "\r\n").toBuf.in
 
      headers := WebUtil.parseHeaders(in)
-     verifyEq(headers.caseInsensitive, true)
+     verify(headers is CaseInsensitiveMap)
      verifyEq(headers,
        [
         "Host":     "foobar",
@@ -102,16 +102,16 @@ class UtilTest : Test
     verifyEq(buf.flip.readAllStr, "xyz")
     verifyEq(in.readBuf(buf.clear, 20), 11)
     verifyEq(buf.flip.readAllStr, "hello there")
-    verifyEq(in.readBuf(buf.clear, 20), null)
-    verifyEq(in.readBuf(buf.clear, 20), null)
+    verifyEq(in.readBuf(buf.clear, 20), -1)
+    verifyEq(in.readBuf(buf.clear, 20), -1)
 
     // readBufFully
     in = WebUtil.makeChunkedInStream(str.toBuf.in)
     in.readBufFully(buf.clear, 14)
     verifyEq(buf.readAllStr, "xyzhello there")
-    verifyEq(in.read, null)
-    verifyEq(in.readChar, null)
-    verifyEq(in.read, null)
+    verifyEq(in.read, -1)
+    verifyEq(in.readChar, -1)
+    verifyEq(in.read, -1)
 
     // unread
     in = WebUtil.makeChunkedInStream(str.toBuf.in)
@@ -153,7 +153,7 @@ class UtilTest : Test
 
     in := WebUtil.makeChunkedInStream(buf.flip.in)
     2000.times |Int i| { verifyEq(in.readLine, i.toStr) }
-    verifyEq(in.read, null)
+    verifyEq(in.read, -1)
   }
 
   Void testParseQVals()
@@ -166,7 +166,7 @@ class UtilTest : Test
     q := WebUtil.parseQVals("foo , compress ; q=0.8 , gzip ; q=0.5 , bar; q=x")
     verifyEq(q, Str:Float["foo":1.0f, "compress": 0.8f, "gzip": 0.5f, "bar":1.0f])
     verifyEq(q["compress"], 0.8f)
-    verifyEq(q["def"], 0.0f)
+    //verifyEq(q["def"], 0.0f)
   }
 
   Void testParseMultiPart()
@@ -210,7 +210,7 @@ class UtilTest : Test
        KQ29udGVudC1UeXBlOiB0ZXh0L3BsYWluDQoNCi0tLS0tLS0NCi0tLS0tLS0NCi0tLS
        0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tN2RhY2IxOTVlMDYzMi0tDQo="
     count := 0
-    WebUtil.parseMultiPart(Buf.fromBase64(base64).in, boundary) |h, in|
+    WebUtil.parseMultiPart(BufCrypto.fromBase64(base64).in, boundary) |h, in|
     {
       switch (count++)
       {
@@ -226,7 +226,7 @@ class UtilTest : Test
           buf := Buf()
           in.readBufFully(buf, 100)
           100.times |i| { verifyEq(buf[i], 100+i) }
-          verifyNull(in.read)
+          verifyEq(in.read, -1)
 
         // verify data that might look like boundaries
         case 2:

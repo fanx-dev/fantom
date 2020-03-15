@@ -44,7 +44,7 @@ const class Font
   **   Font.fromStr("bold 10pt Courier")
   **   Font.fromStr("italic bold 8pt Times")
   **   Font.fromStr("italic 300 10pt sans-serif")
-  static new fromStr(Str s, Bool checked := true)
+  static Font? fromStr(Str s, Bool checked := true)
   {
     try
     {
@@ -99,7 +99,7 @@ const class Font
 
   ** Construct from a map of CSS props such as font-family, font-size.
   ** Also see `toProps`.
-  static new fromProps(Str:Str props)
+  static Font? fromProps([Str:Str] props)
   {
     if (props["font-family"] == null) return null
     return makeFields(
@@ -113,7 +113,7 @@ const class Font
   ** Also see `fromProps`
   Str:Str toProps()
   {
-    acc := Str:Str[:] { ordered = true }
+    acc := OrderedMap<Str,Str>()
     acc["font-family"] = names.join(",")
     acc["font-size"] = GeomUtil.formatFloat(size) + "pt"
     if (!weight.isNormal) acc["font-weight"] = weight.num.toStr

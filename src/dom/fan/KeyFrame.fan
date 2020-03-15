@@ -69,7 +69,7 @@ using concurrent
 @Js const class KeyFrame
 {
   ** Construct new KeyFrame for given step and props.
-  new make(Str step, Str:Obj props)
+  new make(Str step, [Str:Obj] props)
   {
     this.step  = step
     this.props = props
@@ -79,5 +79,5 @@ using concurrent
   const Str step
 
   ** Properies for this keyframe.
-  const Str:Obj props
+  const [Str:Obj] props
 }

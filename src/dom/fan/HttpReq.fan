@@ -29,7 +29,7 @@ class HttpReq
 
   ** If true then perform this request asynchronously.
   ** Defaults to 'true'
-  Bool async := true
+  Bool asynch := true
 
   **
   ** Indicates whether or not cross-site 'Access-Control' requests
@@ -87,12 +87,12 @@ class HttpReq
   ** the map into a valid url-encoded content string, and sets
   ** 'Content-Type' header to 'application/x-www-form-urlencoded'.
   **
-  Void postForm(Str:Str form, |HttpRes res| c)
+  Void postForm([Str:Str] form, |HttpRes res| c)
   {
     headers["Content-Type"] = "application/x-www-form-urlencoded"
     send("POST", encodeForm(form), c)
   }
 
   ** Encode the form map into a value URL-encoded string.
-  private native Str encodeForm(Str:Str form)
+  private native Str encodeForm([Str:Str] form)
 }

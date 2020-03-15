@@ -271,7 +271,7 @@ class SmtpClient
     if (res.code != 334) throw SmtpErr.makeRes(res)
 
     // generate HMAC from nonce and password
-    nonce := Buf.fromBase64(res.line.trim)
+    nonce := BufCrypto.fromBase64(res.line.trim)
     hmac := nonce.hmac("MD5", password.toBuf)
     cred := "$username $hmac.toHex.lower"
 

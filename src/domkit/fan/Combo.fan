@@ -74,7 +74,8 @@ using dom
   // framework use only
   internal Void update(Str val)
   {
-    button.sel.index = items.findIndex |i| { i == val } ?: 0
+    i := items.findIndex |i| { i == val }
+    button.sel.index = i != -1 ? i : 0
   }
 
   private ListButton button

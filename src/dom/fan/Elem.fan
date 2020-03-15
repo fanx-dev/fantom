@@ -337,7 +337,7 @@ class Elem
   **   transition(["opacity": "0.5"], null, 1sec) { echo("done!") }
   **   transition(["opacity": "0.5"], ["transition-delay": 500ms], 1sec) { echo("done!") }
   **
-  Void transition(Str:Obj props, [Str:Obj]? opts, Duration dur, |Elem|? onComplete := null)
+  Void transition([Str:Obj] props, [Str:Obj]? opts, Duration dur, |Elem|? onComplete := null)
   {
     // force layout
     x := this.size

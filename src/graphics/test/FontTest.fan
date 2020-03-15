@@ -81,7 +81,7 @@ class FontTest : Test
     verifyNotEq(f, Font { it.names = names; it.size = size; it.weight = weight; it.style = FontStyle.vals[style.ordinal+1] })
 
     verifyEq(f, Font.fromStr(f.toStr))
-    verifyEq(f, Buf().writeObj(f).flip.readObj)
+    verifyEq(f, Buf() { out.writeObj(f) } .flip.in.readObj)
   }
 
   Void testNormalize()
@@ -124,7 +124,7 @@ class FontTest : Test
     verifyProps("italic 800 8pt Helvetica", ["font-family":"Helvetica", "font-size":"8pt", "font-weight":"800", "font-style":"italic"])
   }
 
-  Void verifyProps(Str str, Str:Str props)
+  Void verifyProps(Str str, [Str:Str] props)
   {
     f := Font(str)
     verifyEq(f.toProps, props)

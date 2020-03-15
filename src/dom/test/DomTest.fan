@@ -414,7 +414,7 @@ using web
     verifyEq(a->y1, "5")
 
     // svg classNames
-    verifyEq(a.style.classes, Str#.emptyList)
+    verifyEq(a.style.classes, List.defVal)
     a.style.addClass("a b c")
     verifyEq(a.style.classes, ["a", "b", "c"])
     verifyEq(a.style.hasClass("a"), true)

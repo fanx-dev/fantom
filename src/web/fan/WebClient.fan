@@ -82,7 +82,7 @@ class WebClient
   ** case insensitive keys.  The "Host" header is implicitly defined
   ** by 'reqUri' and must not be defined in this map.
   **
-  Str:Str reqHeaders := Str:Str[:] { caseInsensitive = true }
+  Str:Str reqHeaders := CaseInsensitiveMap<Str,Str>() // { caseInsensitive = true }
 
   **
   ** Get the output stream used to write the request body.  This
@@ -184,7 +184,7 @@ class WebClient
   ** one or more cookies then this field is automatically updated with
   ** the server specified cookies.
   **
-  Cookie[] cookies := Cookie#.emptyList
+  Cookie[] cookies := List.defVal
   {
     set
     {
@@ -240,7 +240,7 @@ class WebClient
   private static Uri? proxyDef()
   {
     try
-      return WebClient#.pod.config("proxy")?.toUri
+      return Uri.toUri(WebClient#.pod.config("proxy"))
     catch (Err e)
       e.trace
     return null
@@ -315,7 +315,7 @@ class WebClient
   ** does not support the ["Expect" header]`pod-doc#expectContinue` (it
   ** posts all form data before reading response).
   **
-  This postForm(Str:Str form)
+  This postForm([Str:Str] form)
   {
     if (reqHeaders["Expect"] != null) throw UnsupportedErr("'Expect' header")
     body := Uri.encodeQuery(form)
@@ -365,7 +365,7 @@ class WebClient
     ct := reqHeaders["Content-Type"]
     if (ct == null)
       reqHeaders["Content-Type"] = file.mimeType?.toStr ?: "application/octet-stream"
-    if (file.size != null)
+    if (file.size > 0)
       reqHeaders["Content-Length"] = file.size.toStr
     writeReq
     file.in.pipe(reqOut, file.size)
@@ -388,7 +388,7 @@ class WebClient
   {
     // sanity checks
     if (!reqUri.isAbs || reqUri.scheme == null || reqUri.host == null) throw Err("reqUri is not absolute: `$reqUri`")
-    if (!reqHeaders.caseInsensitive) throw Err("reqHeaders must be case insensitive")
+    if (reqHeaders isnot CaseInsensitiveMap) throw Err("reqHeaders must be case insensitive")
     if (reqHeaders.containsKey("Host")) throw Err("reqHeaders must not define 'Host'")
 
     // connect to the host:port if we aren't already connected
@@ -557,7 +557,7 @@ class WebClient
 
   private static const Version ver10 := Version("1.0")
   private static const Version ver11 := Version("1.1")
-  private static const Str:Str noHeaders := Str:Str[:]
+  private static const [Str:Str] noHeaders := Str:Str[:]
 
   private InStream? resInStream
   private OutStream? reqOutStream

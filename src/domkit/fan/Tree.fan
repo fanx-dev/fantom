@@ -35,7 +35,7 @@ using graphics
   ** Get the children of this node.  If no children return
   ** an empty list. Default behavior is no children. This
   ** method must return the same instances when called.
-  virtual TreeNode[] children() { TreeNode#.emptyList }
+  virtual TreeNode[] children() { List.defVal }
 
   ** Callback to customize Elem for this node.
   abstract Void onElem(Elem elem, TreeFlags flags)

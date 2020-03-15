@@ -23,12 +23,13 @@ class Build : BuildPod
                   "proj.name":    "Fantom Core",
                   "proj.uri":     "http://fantom.org/",
                   "license.name": "Academic Free License 3.0",
-                  "vcs.name":     "Git",
-                  "vcs.uri":      "https://github.com/fantom-lang/fantom"]
-    depends    = ["sys 1.0",
+                  "vcs.name":     "Mercurial",
+                  "vcs.uri":      "https://bitbucket.org/fantom/fan-1.0/"]
+    depends    = ["sys 2.0",
+                  "std 1.0",
                   "concurrent 1.0",
                   "fandoc 1.0",
-                  "fanr 1.0",
+                  //"fanr 1.0",
                   "syntax 1.0",
                   "util 1.0",
                   "web 1.0"]

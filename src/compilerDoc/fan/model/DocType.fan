@@ -15,7 +15,7 @@ const class DocType : Doc
 {
 
   ** Constructor
-  internal new make(DocPod pod, DocAttrs attrs, DocTypeRef ref, Str:DocSlot slotMap)
+  internal new make(DocPod pod, DocAttrs attrs, DocTypeRef ref, [Str:DocSlot] slotMap)
   {
     this.pod     = pod
     this.ref     = ref
@@ -120,7 +120,7 @@ const class DocType : Doc
     if (checked) throw UnknownSlotErr("${qname}::${name}")
     return null
   }
-  private const Str:DocSlot slotMap
+  private const [Str:DocSlot] slotMap
 
   ** return qname
   override Str toStr() { qname }

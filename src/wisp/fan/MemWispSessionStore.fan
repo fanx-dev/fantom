@@ -27,7 +27,7 @@ internal const class MemWispSessionStore : Actor, WispSessionStore
 
   override Str:Obj? load(Str id) { send(Msg("load", id)).get(timeout) }
 
-  override Void save(Str id, Str:Obj? map) { send(Msg("save", id, map)) }
+  override Void save(Str id, [Str:Obj?] map) { send(Msg("save", id, map)) }
 
   override Void delete(Str id) { send(Msg("delete", id)) }
 
@@ -56,14 +56,14 @@ internal const class MemWispSessionStore : Actor, WispSessionStore
     return null
   }
 
-  private Obj? onHouseKeeping(Str:MemStoreSession sessions)
+  private Obj? onHouseKeeping([Str:MemStoreSession] sessions)
   {
     // clean-up old sessions after expiration period
     now := Duration.nowTicks
     expired := Str[,]
     sessions.each |session|
     {
-      if (now - session.lastAccess > expirationPeriod.ticks)
+      if (now - session.lastAccess > expirationPeriod.toNanos)
         expired.add(session.id)
     }
     expired.each |id| { sessions.remove(id) }
@@ -71,12 +71,12 @@ internal const class MemWispSessionStore : Actor, WispSessionStore
     return null
   }
 
-  private Map onLoad(Str:MemStoreSession sessions, Msg msg)
+  private Map onLoad([Str:MemStoreSession] sessions, Msg msg)
   {
     sessions[msg.id]?.map ?: emptyMap
   }
 
-  private Obj? onSave(Str:MemStoreSession sessions, Msg msg)
+  private Obj? onSave([Str:MemStoreSession] sessions, Msg msg)
   {
     session := sessions[msg.id]
     if (session == null) sessions[msg.id] = session = MemStoreSession(msg.id)
@@ -85,7 +85,7 @@ internal const class MemWispSessionStore : Actor, WispSessionStore
     return null
   }
 
-  private Obj? onDelete(Str:MemStoreSession sessions, Msg msg)
+  private Obj? onDelete([Str:MemStoreSession] sessions, Msg msg)
   {
     sessions.remove(msg.id)
     return null
@@ -94,7 +94,7 @@ internal const class MemWispSessionStore : Actor, WispSessionStore
   const Duration houseKeepingPeriod := 1min
   const Duration expirationPeriod := 24hr
   const Duration timeout := 15sec
-  const Str:Obj? emptyMap := [:]
+  const [Str:Obj?] emptyMap := [:]
 }
 
 internal const class Msg

@@ -104,8 +104,8 @@ internal class LineTokenizer
 
     // build keyword map, and also a prefix map
     // of the first two characters for fast yes/no
-    keywords = Str :Bool[:] { def=false }
-    keywordPrefixes = Int:Bool[:] { def=false }
+    keywords = Str :Bool[:] //{ def=false }
+    keywordPrefixes = Int:Bool[:] //{ def=false }
     if (rules.keywords != null)
     {
       rules.keywords.each |Str k|
@@ -191,7 +191,7 @@ internal class LineTokenizer
     }
 
     // identifier which might be keyword
-    if (keywordPrefixes[cur.shiftl(16).or(peek)] &&
+    if (keywordPrefixes[cur.shiftl(16).or(peek)] == true &&
         (pos==0 || !line[pos-1].isAlphaNum))
     {
       start := pos
@@ -199,7 +199,7 @@ internal class LineTokenizer
       consume
       while (cur.isAlphaNum || cur == '_') consume
       word := line[start..<pos]
-      if (keywords[word]) return SyntaxType.keyword
+      if (keywords[word] == true) return SyntaxType.keyword
       return SyntaxType.text
     }
 

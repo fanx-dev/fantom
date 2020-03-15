@@ -75,7 +75,7 @@ const class DomkitTestMod : WebMod
   Void onTest()
   {
     name := req.modRel.path.getSafe(1) ?: ""
-    type := typeof.pod.type(name, false)
+    type := this.typeof.pod.type(name, false)
     if (type == null || !type.fits(DomkitTest#)) { res.sendErr(404); return }
 
     res.headers["Content-Type"] = "text/html; charset=utf-8"
@@ -86,8 +86,9 @@ const class DomkitTestMod : WebMod
       .title.w("Domkit Test").titleEnd
       .includeCss(`/pod/domkit/res/css/domkit.css`)
       .includeJs(`/pod/sys/sys.js`)
-      .includeJs(`/tz.js`)
-      .includeJs(`/units.js`)
+      .includeJs(`/pod/std/std.js`)
+      //.includeJs(`/tz.js`)
+      //.includeJs(`/units.js`)
       .includeJs(`/pod/util/util.js`)
       .includeJs(`/pod/concurrent/concurrent.js`)
       .includeJs(`/pod/graphics/graphics.js`)

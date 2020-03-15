@@ -213,7 +213,7 @@ class FandocDocWriter : DocWriter
 @Js
 internal class ListIndex
 {
-  private static const Int:Str romans  := sortr([1000:"M", 900:"CM", 500:"D", 400:"CD", 100:"C", 90:"XC", 50:"L", 40:"XL", 10:"X", 9:"IX", 5:"V", 4:"IV", 1:"I"])
+  private static const [Int:Str] romans  := sortr([1000:"M", 900:"CM", 500:"D", 400:"CD", 100:"C", 90:"XC", 50:"L", 40:"XL", 10:"X", 9:"IX", 5:"V", 4:"IV", 1:"I"])
 
   OrderedListStyle? style
   Int index  := 1
@@ -262,11 +262,11 @@ internal class ListIndex
     return (int > l) ? romans[l] + toRoman(int - l) : romans[l]
   }
 
-  private static Int:Str sortr(Int:Str unordered)
+  private static [Int:Str] sortr([Int:Str] unordered)
   {
     // no ordered literal map... grr...
     // http://fantom.org/sidewalk/topic/1837#c14431
-    sorted := [:] { it.ordered = true }
+    sorted := OrderedMap<Int,Str>()//[:] { it.ordered = true }
     unordered.keys.sortr.each { sorted[it] = unordered[it] }
     return sorted
   }

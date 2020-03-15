@@ -25,7 +25,7 @@ const class CssDim
 
   ** Parse from string.  If invalid and checked is
   ** true then throw ParseErr otherwise return null.
-  static new fromStr(Str s, Bool checked := true)
+  static CssDim? fromStr(Str s, Bool checked := true)
   {
     try
     {

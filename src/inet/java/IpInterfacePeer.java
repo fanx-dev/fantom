@@ -12,6 +12,9 @@ import java.net.*;
 import java.util.Enumeration;
 import java.util.Iterator;
 import fan.sys.*;
+import fan.std.*;
+import fanx.main.*;
+import fanx.interop.*;
 
 public class IpInterfacePeer
 {
@@ -33,7 +36,7 @@ public class IpInterfacePeer
   {
     try
     {
-      List acc = new List(type);
+      List acc = List.make(4);
       Enumeration e = NetworkInterface.getNetworkInterfaces();
       while (e.hasMoreElements())
         acc.add(make((NetworkInterface)e.nextElement()));
@@ -125,7 +128,7 @@ public class IpInterfacePeer
 
   public List addrs(IpInterface fan)
   {
-    List acc = new List(IpAddrPeer.type);
+    List acc = List.make(4);
     Enumeration e = java.getInetAddresses();
     while (e.hasMoreElements())
       acc.add(IpAddrPeer.make((InetAddress)e.nextElement()));
@@ -134,7 +137,7 @@ public class IpInterfacePeer
 
   public List broadcastAddrs(IpInterface fan)
   {
-    List acc = new List(IpAddrPeer.type);
+    List acc = List.make(4);
     Iterator iter = java.getInterfaceAddresses().iterator();
     while (iter.hasNext())
     {
@@ -163,7 +166,7 @@ public class IpInterfacePeer
     {
       byte[] addr = java.getHardwareAddress();
       if (addr == null) return null;
-      return new MemBuf(addr);
+      return Interop.toFanBuf(addr);
     }
     catch (IOException e)
     {

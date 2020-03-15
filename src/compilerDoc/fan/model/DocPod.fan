@@ -67,7 +67,7 @@ const class DocPod : DocSpace
 
   ** Get the meta name/value pairs for this pod.
   ** See [docLang]`docLang::Pods#meta`.
-  const Str:Str meta
+  const [Str:Str] meta
 
   ** Document which models the index page for this pod
   const DocPodIndex index
@@ -90,7 +90,7 @@ const class DocPod : DocSpace
     if (checked) throw UnknownTypeErr("${this.name}::${typeName}")
     return null
   }
-  private const Str:DocType typeMap
+  private const [Str:DocType] typeMap
 
   ** If this pod has an associated pod.fandoc chapter
   const DocChapter? podDoc
@@ -110,7 +110,7 @@ const class DocPod : DocSpace
     if (checked) throw Err("Unknown chapter: ${this.name}::${chapterName}")
     return null
   }
-  private const Str:DocChapter chapterMap
+  private const [Str:DocChapter] chapterMap
 
   ** Resource files in pod which are used to support the
   ** documentation such as images used by the fandoc chapters.
@@ -127,7 +127,7 @@ const class DocPod : DocSpace
     if (checked) throw UnknownDocErr("resource file: $filename")
     return null
   }
-  private const Str:DocRes resMap
+  private const [Str:DocRes] resMap
 
   ** Source files in pod which should be included in documentation.
   const DocSrc[] srcList
@@ -141,7 +141,7 @@ const class DocPod : DocSpace
     if (checked) throw UnknownDocErr("source file: $filename")
     return null
   }
-  private const Str:DocSrc srcMap
+  private const [Str:DocSrc] srcMap
 
   ** Space name is same as `name`
   override Str spaceName() { name }
@@ -258,7 +258,7 @@ internal class DocPodLoader
   {
     // first read meta
     metaFile := zip.contents[`/meta.props`] ?: throw Err("Pod missing meta.props: $file")
-    this.meta    = metaFile.readProps
+    this.meta    = metaFile.in.readProps
     this.name    = getMeta("pod.name")
     this.summary = getMeta("pod.summary")
     this.version = Version.fromStr(getMeta("pod.version"))
@@ -312,7 +312,7 @@ internal class DocPodLoader
         // if doc/index.fog
         if (f.name == "index.fog")
         {
-          indexFog = f.readObj
+          indexFog = f.in.readObj
           return
         }
 
@@ -330,7 +330,7 @@ internal class DocPodLoader
     finishIndex
   }
 
-  private Void finishTypes(Str:DocType map)
+  private Void finishTypes([Str:DocType] map)
   {
     // create sorted list
     list := map.vals.sort|a, b| { a.name <=> b.name }
@@ -371,7 +371,7 @@ internal class DocPodLoader
     this.toc      = toc.toImmutable
   }
 
-  private Void finishChapters(Str:DocChapter map, Obj[]? indexFog)
+  private Void finishChapters([Str:DocChapter] map, Obj[]? indexFog)
   {
     // create sorted list of chapters
     list := map.vals.sort |a, b| { a.name <=> b.name }
@@ -380,7 +380,7 @@ internal class DocPodLoader
     if (!typeList.isEmpty || list.size <= 1)
     {
       this.podDoc = list.find |x| { x.isPodDoc }
-      this.chapterList = this.podDoc == null ? DocChapter#.emptyList : DocChapter[podDoc]
+      this.chapterList = this.podDoc == null ? List.defVal : DocChapter[podDoc]
       this.chapterMap  = Str:DocChapter[:].setList(this.chapterList) |x| { x.name }
       return
     }

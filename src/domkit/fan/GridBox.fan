@@ -70,19 +70,19 @@ using dom
   Int numRows() { tbody.children.size }
 
   ** Add a new row to grid.
-  This addRow(Elem?[] cells, Int[] colspan := Int#.emptyList)
+  This addRow(Elem?[] cells, Int[] colspan := List.defVal)
   {
     _addRow(null, cells, colspan)
   }
 
   ** Insert row before given index.
-  This insertRowBefore(Int index, Elem?[] cells, Int[] colspan := Int#.emptyList)
+  This insertRowBefore(Int index, Elem?[] cells, Int[] colspan := List.defVal)
   {
     _addRow(index, cells, colspan)
   }
 
   ** Add a new row to grid.
-  private This _addRow(Int? at, Elem?[] cells, Int[] colspan := Int#.emptyList)
+  private This _addRow(Int? at, Elem?[] cells, Int[] colspan := List.defVal)
   {
     r  := tbody.children.size
     cx := 0

@@ -51,7 +51,7 @@ class WebClientTest : Test
       verifyEq(c.resVersion, Version("1.1"))
       verifyEq(c.resCode, 200)
       verifyEq(c.resPhrase, "OK")
-      verifyEq(c.resHeaders.caseInsensitive, true)
+      verify(c.resHeaders is CaseInsensitiveMap)
 
       // response headers
       verify(c.resHeader("server").contains("nginx"))
@@ -83,7 +83,7 @@ class WebClientTest : Test
       verifyEq(c.resVersion, Version("1.1"))
       verifyEq(c.resCode, 200)
       verifyEq(c.resPhrase, "OK")
-      verifyEq(c.resHeaders.caseInsensitive, true)
+      verify(c.resHeaders is CaseInsensitiveMap)
 
       // chunked transfer
       verify(c.resHeader("Transfer-Encoding").lower.contains("chunked"))

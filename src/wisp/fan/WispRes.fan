@@ -23,7 +23,7 @@ internal class WispRes : WebRes
   new make(WispService service, TcpSocket socket)
   {
     // init headers
-    headers := Str:Str[:] { caseInsensitive = true }
+    headers := CaseInsensitiveMap<Str,Str>()// { caseInsensitive = true }
     headers["Date"] = DateTime.now.toHttpStr
     headers["Connection"] = "close"
     headers.setAll(service.extraResHeaders)

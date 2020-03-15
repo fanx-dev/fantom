@@ -10,6 +10,8 @@ package fan.inet;
 import java.io.*;
 import java.net.*;
 import fan.sys.*;
+import fan.std.*;
+import fanx.main.*;
 
 public class MulticastSocketPeer extends UdpSocketPeer
 {

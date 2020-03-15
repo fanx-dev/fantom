@@ -1062,7 +1062,7 @@ using graphics
   private Int colxSafe(Int c) { colx.getSafe(c) ?: colx.last + colw.last + ((c-colx.size+1) * 100)}
   private Int colwSafe(Int c) { colw.getSafe(c) ?: 100 }
 
-  private Str ts() { "${(Duration.now - Duration.boot).toMillis}ms" }
+  private Str ts() { "${(Duration.now).toMillis}ms" }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields

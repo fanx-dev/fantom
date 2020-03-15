@@ -17,7 +17,7 @@
 const class Transform
 {
   ** Parse from SVG string format
-  static new fromStr(Str s, Bool checked := true)
+  static Transform? fromStr(Str s, Bool checked := true)
   {
     try
     {
@@ -123,7 +123,7 @@ const class Transform
     return s.toStr
   }
 
-  private static Str f2s(Float f) { f.toLocale("0.#####", Locale.en) }
+  private static Str f2s(Float f) { f.toLocale("0.#####") }
 
   const Float a
   const Float b

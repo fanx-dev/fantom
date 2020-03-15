@@ -10,6 +10,9 @@ package fan.inet;
 import java.io.*;
 import java.net.*;
 import fan.sys.*;
+import fan.std.*;
+import fanx.main.*;
+import fanx.interop.*;
 
 public class UdpSocketPeer
 {
@@ -128,9 +131,9 @@ public class UdpSocketPeer
   {
     // map buf bytes to packet
     MemBuf data = (MemBuf)packet.data();
-    byte[] buf = data.buf;
-    int off = data.pos;
-    int len = data.size - off;
+    byte[] buf = Interop.toJavaByteArray(data);
+    int off = (int)data.pos;
+    int len = (int)(data.size - off);
     DatagramPacket datagram = new DatagramPacket(buf, off, len);
 
     // map address, port
@@ -167,13 +170,13 @@ public class UdpSocketPeer
   {
     // create packet if null
     if (packet == null)
-      packet = UdpPacket.make(null, null, new MemBuf(1024));
+      packet = UdpPacket.make(null, null, MemBuf.make(1024));
 
     // map buf bytes to packet
     MemBuf data = (MemBuf)packet.data();
-    byte[] buf = data.buf;
-    int off = data.pos;
-    int len = buf.length - off;
+    byte[] buf = Interop.toJavaByteArray(data);
+    int off = (int)data.pos;
+    int len = (int)(buf.length - off);
     DatagramPacket datagram = new DatagramPacket(buf, off, len);
 
     // receive
@@ -328,7 +331,7 @@ public class UdpSocketPeer
     {
       int timeout = socket.getSoTimeout();
       if (timeout <= 0) return null;
-      return Duration.makeMillis(timeout);
+      return Duration.fromMillis(timeout);
     }
     catch (IOException e)
     {
@@ -343,7 +346,7 @@ public class UdpSocketPeer
       if (v == null)
         socket.setSoTimeout(0);
       else
-        socket.setSoTimeout((int)(v.millis()));
+        socket.setSoTimeout((int)(v.toMillis()));
     }
     catch (IOException e)
     {

@@ -29,7 +29,7 @@ const class Point
 
   ** Parse from comma or space separated string.
   ** If invalid then throw ParseErr or return null based on checked flag.
-  static new fromStr(Str s, Bool checked := true)
+  static Point? fromStr(Str s, Bool checked := true)
   {
     try
     {
@@ -87,7 +87,7 @@ const class Size
 
   ** Parse from comma or space separated string.
   ** If invalid then throw ParseErr or return null based on checked flag.
-  static new fromStr(Str s, Bool checked := true)
+  static Size? fromStr(Str s, Bool checked := true)
   {
     try
     {
@@ -157,7 +157,7 @@ const class Rect
 
   ** Parse from comma or space separated string.
   ** If invalid then throw ParseErr or return null based on checked flag.
-  static new fromStr(Str s, Bool checked := true)
+  static Rect? fromStr(Str s, Bool checked := true)
   {
     try
     {
@@ -287,7 +287,7 @@ const class Insets
   **   - "top, right" (implies bottom = top, left = right)
   **   - "top, right, bottom" (implies left = right)
   **   - "top, right, bottom, left"
-  static new fromStr(Str s, Bool checked := true)
+  static Insets? fromStr(Str s, Bool checked := true)
   {
     try
     {
@@ -398,6 +398,6 @@ const class GeomUtil
   ** Format float to string
   static Str formatFloat(Float f)
   {
-    f.toLocale("0.###", Locale.en)
+    f.toLocale("0.###")
   }
 }

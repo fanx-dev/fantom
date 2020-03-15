@@ -9,13 +9,13 @@
 **
 ** Models an Image
 **
-@NoDoc @Js const class Image
+@NoDoc @Js virtual const class Image
 {
   ** Construct with it-block
   new make(|This| f) { f(this) }
 
   ** Decode a buffer into an Image
-  static new decode(Buf buf, Bool checked := true)
+  static Image? decode(Buf buf, Bool checked := true)
   {
     try
     {
@@ -39,7 +39,7 @@
   const Size size
 
   ** Image-specific properties
-  protected const Str:Obj props
+  protected const [Str:Obj] props
 
   ** Image properties
   **  - 'colorSpace' (Str) - the image color space (e.g.RGB, RGBA, CMYK)

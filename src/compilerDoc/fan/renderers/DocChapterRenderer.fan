@@ -106,7 +106,7 @@ class DocChapterRenderer : DocRenderer
 
     // map chapters into parts
     cur := this.chapter
-    map  := Str:DocChapter[][:] { ordered=true }
+    map  := OrderedMap<Str,DocChapter[]>()//[:] { ordered=true }
     last := ""
     chapter.pod.index.toc.each |item|
     {

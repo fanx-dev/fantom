@@ -17,7 +17,7 @@ using dom
 **   height: 100%;
 **   position: relative;
 **
-@Js class Box : Elem
+@Js virtual class Box : Elem
 {
   new make() : super("div")
   {

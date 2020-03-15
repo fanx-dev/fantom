@@ -18,7 +18,7 @@ abstract class EmailPart
   **
   ** Map of headers.  The header map is case insensitive.
   **
-  Str:Str headers := Str:Str[:] { caseInsensitive = true }
+  Str:Str headers := CaseInsensitiveMap<Str,Str>()// { caseInsensitive = true }
 
   **
   ** Validate this part - throw Err if not configured correctly.

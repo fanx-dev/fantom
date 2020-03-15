@@ -34,7 +34,7 @@ using graphics
 
       // check for selection
       index := children.findIndex |k| { t == k }
-      if (index != null)
+      if (index != -1)
       {
         MenuItem item := children[index]
         select(item.enabled ? index : null)

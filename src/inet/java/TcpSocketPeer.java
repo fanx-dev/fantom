@@ -12,6 +12,9 @@ import java.io.*;
 import java.net.*;
 import java.security.*;
 import javax.net.ssl.*;
+import fan.std.*;
+import fanx.main.*;
+import fanx.interop.*;
 
 public class TcpSocketPeer
 {
@@ -173,7 +176,7 @@ public class TcpSocketPeer
     try
     {
       // connect
-      int javaTimeout = (timeout == null) ? 0 : (int)timeout.millis();
+      int javaTimeout = (timeout == null) ? 0 : (int)timeout.toMillis();
       socket.connect(new InetSocketAddress(addr.peer.java, (int)port), javaTimeout);
       connected(fan);
       return fan;
@@ -190,8 +193,8 @@ public class TcpSocketPeer
     InetSocketAddress sockAddr = (InetSocketAddress)socket.getRemoteSocketAddress();
     this.remoteAddr = IpAddrPeer.make(sockAddr.getAddress());
     this.remotePort = sockAddr.getPort();
-    this.in  = SysInStream.make(socket.getInputStream(), getInBufferSize(fan));
-    this.out = SysOutStream.make(socket.getOutputStream(), getOutBufferSize(fan));
+    this.in  = Interop.toFan(socket.getInputStream(), getInBufferSize(fan));
+    this.out = Interop.toFan(socket.getOutputStream(), getOutBufferSize(fan));
   }
 
   public InStream in(TcpSocket fan)
@@ -389,7 +392,7 @@ public class TcpSocketPeer
     {
       int linger = socket.getSoLinger();
       if (linger < 0) return null;
-      return Duration.makeSec(linger);
+      return Duration.fromSec(linger);
     }
     catch (IOException e)
     {
@@ -404,7 +407,7 @@ public class TcpSocketPeer
       if (v == null)
         socket.setSoLinger(false, 0);
       else
-        socket.setSoLinger(true, (int)(v.sec()));
+        socket.setSoLinger(true, (int)(v.toSec()));
     }
     catch (IOException e)
     {
@@ -418,7 +421,7 @@ public class TcpSocketPeer
     {
       int timeout = socket.getSoTimeout();
       if (timeout <= 0) return null;
-      return Duration.makeMillis(timeout);
+      return Duration.fromMillis(timeout);
     }
     catch (IOException e)
     {
@@ -433,7 +436,7 @@ public class TcpSocketPeer
       if (v == null)
         socket.setSoTimeout(0);
       else
-        socket.setSoTimeout((int)(v.millis()));
+        socket.setSoTimeout((int)(v.toMillis()));
     }
     catch (IOException e)
     {
@@ -504,7 +507,7 @@ public class TcpSocketPeer
   private int outBufSize = 4096;
   private IpAddr remoteAddr;
   private int remotePort;
-  private SysInStream in;
-  private SysOutStream out;
+  private InStream in;
+  private OutStream out;
   private SocketOptions options;
 }

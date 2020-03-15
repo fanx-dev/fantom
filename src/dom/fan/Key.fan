@@ -107,8 +107,8 @@ const class Key
 // Registry
 //////////////////////////////////////////////////////////////////////////
 
-  private static const Int:Key byCode
-  private static const Str:Key byName
+  private static const [Int:Key] byCode
+  private static const [Str:Key] byName
   static
   {
     c := Int:Key[:]
@@ -137,8 +137,8 @@ const class Key
 // Lookup
 //////////////////////////////////////////////////////////////////////////
 
-  ** Lookup by string name or symbol
-  static new fromStr(Str s, Bool checked := true)
+  ** Lookup by string name
+  static Key? fromStr(Str s, Bool checked := true)
   {
     try
     {

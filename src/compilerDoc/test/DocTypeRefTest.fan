@@ -17,7 +17,7 @@ class DocTypeRefTest : Test
     // basic nullable
     t = DocTypeRef("foo::Bar?")
     verifyBasic(t, "foo", "Bar", true)
-
+/*
     // list of basic
     t = DocTypeRef("foo::Bar[]")
     verifyEq(t.pod, "sys")
@@ -122,7 +122,7 @@ class DocTypeRefTest : Test
     verifyEq(t.isNullable, false)
     t = t.v
     verifyEq(t.signature, "sys::Str")
-
+*/
     // errors
     verifyEq(DocTypeRef.fromStr("foo", false), null)
     verifyErr(ParseErr#) { x := DocTypeRef.fromStr("foo") }

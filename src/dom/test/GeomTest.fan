@@ -47,7 +47,7 @@ class GeomTest : Test
   Void verifySer(Obj obj)
   {
     //echo("-- " + Buf.make.writeObj(obj).flip.readAllStr)
-    x := Buf.make.writeObj(obj).flip.readObj
+    x := Buf.make { out.writeObj(obj) }.flip.in.readObj
     verifyEq(obj, x)
   }
 }

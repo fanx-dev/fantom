@@ -9,6 +9,7 @@
 using concurrent
 using web
 using inet
+using util
 
 **
 ** Simple web server services HTTP/HTTPS requests to a top-level root WebMod.
@@ -90,11 +91,11 @@ const class WispService : Service
   ** initialized from etc/web/config.props with the key "extraResHeaders"
   ** as a set of "key:value" pairs separated by semicolons.
   **
-  const Str:Str extraResHeaders := initExtraResHeaders
+  const [Str:Str] extraResHeaders := initExtraResHeaders
 
   private static Str:Str initExtraResHeaders()
   {
-    acc := Str:Str[:] { caseInsensitive = true }
+    acc := CaseInsensitiveMap<Str,Str>()//[:] { caseInsensitive = true }
     try
       parseExtraHeaders(acc, Pod.find("web").config("extraResHeaders", ""))
     catch (Err e)
@@ -103,7 +104,7 @@ const class WispService : Service
   }
 
   ** Parse extra headers taking quoted values into account
-  internal static Void parseExtraHeaders(Str:Str acc, Str str)
+  internal static Void parseExtraHeaders([Str:Str] acc, Str str)
   {
     // trim and remove trailing semicolon
     str = str.trim

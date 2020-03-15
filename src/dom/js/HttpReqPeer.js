@@ -31,7 +31,7 @@ fan.dom.HttpReqPeer.prototype.send = function(self, method, content, f)
 
   // open request
   xhr.open(method.toUpperCase(), self.m_uri.m_str, self.m_async);
-  if (self.m_async)
+  if (self.m_asynch)
   {
     xhr.onreadystatechange = function ()
     {
@@ -81,8 +81,7 @@ fan.dom.HttpReqPeer.prototype.send = function(self, method, content, f)
     throw fan.sys.Err.make("Can only send Str or Buf: " + content);
   }
 
-  // for sync requests; directly invoke response handler
-  if (!self.m_async) f.call(fan.dom.HttpReqPeer.makeRes(xhr));
+  if (!self.m_asynch) f.call(fan.dom.HttpReqPeer.makeRes(xhr));
 }
 
 fan.dom.HttpReqPeer.makeRes = function(xhr)

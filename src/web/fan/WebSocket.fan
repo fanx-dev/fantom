@@ -80,7 +80,7 @@ class WebSocket
     return make(socket, false)
   }
 
-  private static Str checkHeader(Str:Str headers, Str name, Str? expected)
+  private static Str checkHeader([Str:Str] headers, Str name, Str? expected)
   {
     val := headers[name] ?: throw err("Missing $name header")
     if (expected != null && val.indexIgnoreCase(expected) == null)

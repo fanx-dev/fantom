@@ -105,7 +105,7 @@ using concurrent
     if (val == null) { setProp(name, null); return this }
 
     sval := ""
-    switch (val?.typeof)
+    switch (val.typeof)
     {
       case Duration#: sval = "${val->toMillis}ms"
       default:        sval = val.toStr
@@ -131,7 +131,7 @@ using concurrent
 
   ** Set all the given property values.
   **   style.setAll(["color":"#f00", "font-weight":"bold"])
-  This setAll(Str:Obj? map)
+  This setAll([Str:Obj?] map)
   {
     map.each |v,n| { set(n,v) }
     return this

@@ -134,12 +134,12 @@ class Win
   **   // Event.stash contains state map passed into pushState
   **   Win.cur.onEvent("popstate", false) |e| { echo("# state: $e.stash") }
   **
-  native Void hisPushState(Str title, Uri uri, Str:Obj map)
+  native Void hisPushState(Str title, Uri uri, [Str:Obj] map)
 
   **
   ** Modify the current history item.
   **
-  native Void hisReplaceState(Str title, Uri uri, Str:Obj map)
+  native Void hisReplaceState(Str title, Uri uri, [Str:Obj] map)
 
 //////////////////////////////////////////////////////////////////////////
 // Events

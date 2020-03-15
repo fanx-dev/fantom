@@ -82,7 +82,7 @@ class WebUtil
   **
   static Str fromQuotedStr(Str s)
   {
-    if (s.size < 2 || s[0] != '"' || s[-1] != '"')
+    if (s.size < 2 || s[0] != '"' || s[s.size-1] != '"')
       throw ArgErr("Not quoted str: $s")
     return s[1..-2].replace("\\\"", "\"")
   }
@@ -112,8 +112,8 @@ class WebUtil
   // handle set-cookie headers individually
   internal static Str:Str doParseHeaders(InStream in, Cookie[]? cookies)
   {
-    headers := Str:Str[:]
-    headers.caseInsensitive = true
+    headers := CaseInsensitiveMap<Str,Str>()
+    //headers.caseInsensitive = true
     Str? last := null
 
     // read headers into map
@@ -193,7 +193,7 @@ class WebUtil
   static Str:Float parseQVals(Str s)
   {
     map := Str:Float[:]
-    map.def = 0.0f
+    //map.def = 0.0f
     s.split(',').each |tok|
     {
       if (tok.isEmpty) return
@@ -205,8 +205,12 @@ class WebUtil
         name = tok[0..<x].trim
         attrs := tok[x+1..-1].trim
         qattr := attrs.index("q=")
-        if (qattr != null)
-          q  = Float.fromStr(attrs[qattr+2..-1], false) ?: 1.0f
+        if (qattr != null) {
+          try
+            q  = Float.fromStr(attrs[qattr+2..-1], true)
+          catch
+            q = 1.0f
+        }
       }
       map[name] = q
     }
@@ -214,7 +218,7 @@ class WebUtil
   }
 
   ** Write HTTP headers
-  @NoDoc static Void writeHeaders(OutStream out, Str:Str headers)
+  @NoDoc static Void writeHeaders(OutStream out, [Str:Str] headers)
   {
     headers.each |v,k|
     {
@@ -231,13 +235,15 @@ class WebUtil
   ** Given a set of HTTP headers map Content-Type to its charset
   ** or default to UTF-8.
   **
-  static Charset headersToCharset(Str:Str headers)
+  static Charset headersToCharset([Str:Str] headers)
   {
     ct := headers["Content-Type"]
     if (ct != null)
     {
-      mime := MimeType(ct, false)
-      if (mime != null) return mime.charset
+      try {
+        MimeType(ct).charset
+      }
+      catch {}
     }
     return Charset.utf8
   }
@@ -254,7 +260,7 @@ class WebUtil
   ** If a stream is returned, then it is automatically configured
   ** with the correct content encoding based on the Content-Type.
   **
-  static InStream makeContentInStream(Str:Str headers, InStream in)
+  static InStream makeContentInStream([Str:Str] headers, InStream in)
   {
     // handle Content-Length / Transfer-Encoding
     in = doMakeContentInStream(headers, in)
@@ -274,7 +280,7 @@ class WebUtil
     return in
   }
 
-  private static InStream? doMakeContentInStream(Str:Str headers, InStream in)
+  private static InStream? doMakeContentInStream([Str:Str] headers, InStream in)
   {
     // map the "Content-Type" response header to the
     // appropiate charset or default to UTF-8.
@@ -304,7 +310,7 @@ class WebUtil
   ** If a stream is returned, then it is automatically configured
   ** with the correct content encoding based on the Content-Type.
   **
-  static OutStream? makeContentOutStream(Str:Str headers, OutStream out)
+  static OutStream? makeContentOutStream([Str:Str] headers, OutStream out)
   {
     // map the "Content-Type" response header to the
     // appropiate charset or default to UTF-8.
@@ -382,7 +388,7 @@ class WebUtil
   ** must completely drain the input stream to prepare for the next
   ** part.  Also see `WebReq.parseMultiPartForm`.
   **
-  static Void parseMultiPart(InStream in, Str boundary, |Str:Str headers, InStream in| cb)
+  static Void parseMultiPart(InStream in, Str boundary, |[Str:Str] headers, InStream in| cb)
   {
     boundary = "--" + boundary
     line := in.readLine
@@ -424,8 +430,8 @@ class WebUtil
     envStr := StrBuf()
     if (env?.size > 0)
     {
-      envStr.add("var env = fan.sys.Map.make(fan.sys.Str.\$type, fan.sys.Str.\$type);\n")
-      envStr.add("  env.caseInsensitive\$(true);\n")
+      envStr.add("var env = fan.std.CaseInsensitiveMap.make();\n")
+      //envStr.add("  env.caseInsensitive\$(true);\n")
       env.each |v,k|
       {
         envStr.add("  ")
@@ -435,7 +441,7 @@ class WebUtil
         else
           envStr.add("env.set('$k', $v);\n")
       }
-      envStr.add("  fan.sys.Env.cur().\$setVars(env);")
+      envStr.add("  fan.std.Env.cur().\$setVars(env);")
     }
 
     out.printLine(
@@ -448,12 +454,14 @@ class WebUtil
         // find main
         var qname = '$main';
         var dot = qname.indexOf('.');
+        var type = qname;
         if (dot < 0) qname += '.main';
-        var main = fan.sys.Slot.findMethod(qname);
+        else type = qname.substring(0, dot)
+        var main = fan.std.Slot.findMethod(qname);
 
         // invoke main
         if (main.isStatic()) main.call();
-        else main.callOn(main.parent().make());
+        else main.callOn(fan.std.Type.find(type).make());
       }, false);
       </script>")
   }
@@ -476,31 +484,49 @@ class WebUtil
 @Js
 internal class ChunkInStream : InStream
 {
-  new make(InStream in, Int? fixed := null) : super(null)
+  override Endian endian { set{ in.endian = it } get{ in.endian } }
+  override Charset charset { set{ in.charset = it } get { in.charset } }
+
+  new make(InStream in, Int? fixed := null) : super()
   {
     this.in = in
     this.noMoreChunks = (fixed != null)
     this.chunkRem     = (fixed != null) ? fixed : -1
   }
 
-  override Int? read()
+  override Int read()
   {
     if (pushback != null && !pushback.isEmpty) return pushback.pop
-    if (!checkChunk) return null
+    if (!checkChunk) return -1
     chunkRem -= 1
     return in.read
   }
 
-  override Int? readBuf(Buf buf, Int n)
+  //override Int avail() { throw UnsupportedErr("$this.typeof") }
+
+  override Bool close() { return true }
+
+  override Int readBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) {
+    if (pushback != null && !pushback.isEmpty && len > 0)
+    {
+      ba[0] = pushback.pop
+      return 1
+    }
+    numRead := in.readBytes(ba, off, chunkRem.min(len))
+    if (numRead != -1) chunkRem -= numRead
+    return numRead
+  }
+
+  override Int readBuf(Buf buf, Int n)
   {
     if (pushback != null && !pushback.isEmpty && n > 0)
     {
       buf.write(pushback.pop)
       return 1
     }
-    if (!checkChunk) return null
+    if (!checkChunk) return -1
     numRead := in.readBuf(buf, chunkRem.min(n))
-    if (numRead != null) chunkRem -= numRead
+    if (numRead != -1) chunkRem -= numRead
     return numRead
   }
 
@@ -547,7 +573,7 @@ internal class ChunkInStream : InStream
     }
   }
 
-  override Str toStr() { "$typeof { noMoreChunks=$noMoreChunks chunkRem=$chunkRem pushback=$pushback }" }
+  override Str toStr() { "$this.typeof { noMoreChunks=$noMoreChunks chunkRem=$chunkRem pushback=$pushback }" }
 
   InStream in         // underlying input stream
   Bool noMoreChunks   // don't attempt to read more chunks
@@ -561,7 +587,7 @@ internal class ChunkInStream : InStream
 @Js
 internal class FixedOutStream : OutStream
 {
-  new make(OutStream out, Int fixed) : super(null)
+  new make(OutStream out, Int fixed) : super()
   {
     this.out = out
     this.fixed = fixed
@@ -603,6 +629,23 @@ internal class FixedOutStream : OutStream
     if (written > fixed) throw IOErr("Attempt to write more than Content-Length: $fixed")
   }
 
+  override This writeBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) {
+    checkChunk(len)
+    out.writeBytes(ba, off, len)
+    return this
+  }
+
+  override Endian endian {
+    get { out.endian }
+    set { out.endian = it }
+  }
+  override Charset charset {
+    get { out.charset }
+    set { out.charset = it }
+  }
+
+  override This sync() { out.sync; return this }
+
   OutStream out      // underlying output stream
   Int? fixed         // if non-null, then we're using as one fixed chunk
   Int written        // number of bytes written in this chunk
@@ -614,7 +657,7 @@ internal class FixedOutStream : OutStream
 @Js
 internal class ChunkOutStream : OutStream
 {
-  new make(OutStream out) : super(null)
+  new make(OutStream out) : super()
   {
     this.out = out
     this.buffer = Buf(chunkSize + 256)
@@ -667,6 +710,23 @@ internal class ChunkOutStream : OutStream
     if (buffer.size >= chunkSize) flush
   }
 
+  override This writeBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) {
+    buffer.out.writeBytes(ba, off, len)
+    checkChunk
+    return this
+  }
+
+  override Endian endian {
+    get { out.endian }
+    set { out.endian = it }
+  }
+  override Charset charset {
+    get { out.charset }
+    set { out.charset = it }
+  }
+
+  override This sync() { out.sync; return this }
+
   const static Int chunkSize := 1024
 
   OutStream out    // underlying output stream
@@ -680,22 +740,41 @@ internal class ChunkOutStream : OutStream
 @Js
 internal class MultiPartInStream : InStream
 {
-  new make(InStream in, Str boundary) : super(null)
+  new make(InStream in, Str boundary) : super()
   {
     this.in = in
     this.boundary = boundary
     this.curLine = Buf(1024)
   }
 
-  override Int? read()
+  override Int read()
   {
     if (pushback != null && !pushback.isEmpty) return pushback.pop
-    if (!checkLine) return null
+    if (!checkLine) return -1
     numRead += 1
     return curLine.read
   }
 
-  override Int? readBuf(Buf buf, Int n)
+  override Endian endian { set{ in.endian = it } get{ in.endian } }
+  override Charset charset { set{ in.charset = it } get { in.charset } }
+
+  //override Int avail() { throw UnsupportedErr("$this.typeof") }
+  override Bool close() { return true }
+
+  override Int readBytes(Array<Int8> ba, Int off := 0, Int len := ba.size) {
+    if (pushback != null && !pushback.isEmpty && len > 0)
+    {
+      ba[0] = pushback.pop
+      numRead += 1
+      return 1
+    }
+    if (!checkLine) return -1
+    actualRead := curLine.in.readBytes(ba, off, len)
+    numRead += actualRead
+    return actualRead
+  }
+
+  override Int readBuf(Buf buf, Int n)
   {
     if (pushback != null && !pushback.isEmpty && n > 0)
     {
@@ -703,7 +782,7 @@ internal class MultiPartInStream : InStream
       numRead += 1
       return 1
     }
-    if (!checkLine) return null
+    if (!checkLine) return -1
     actualRead := curLine.readBuf(buf, n)
     numRead += actualRead
     return actualRead

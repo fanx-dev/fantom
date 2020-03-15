@@ -132,7 +132,7 @@ class TableTest : DomkitTest
 
     cell.text = text
   }
-  override Int sortCompare(Int c, Int r1, Int r2) { toText(c, r1).localeCompare(toText(c, r2)) }
+  override Int sortCompare(Int c, Int r1, Int r2) { toText(c, r1).compare(toText(c, r2)) }
   private Str toText(Int col, Int row)
   {
     // fill some columns with non-sequential data to test view <-> model mapping

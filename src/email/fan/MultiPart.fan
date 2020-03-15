@@ -45,7 +45,7 @@ class MultiPart : EmailPart
     boundary := mime.params["boundary"]
     if (boundary == null)
     {
-      boundary = "_Part_${DateTime.now.ticks/1ms.ticks}.${Buf.random(4).toHex}"
+      boundary = "_Part_${DateTime.now.toJava}.${Buf.random(4).toHex}"
       headers["Content-Type"] = mime.toStr + "; boundary=\"$boundary\""
     }
   }

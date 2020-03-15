@@ -9,7 +9,7 @@
 **
 ** UdpSocket manages a UDP/IP datagram endpoint.
 **
-class UdpSocket
+virtual class UdpSocket
 {
 
 //////////////////////////////////////////////////////////////////////////

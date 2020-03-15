@@ -39,7 +39,7 @@ class ReqTest : Test
       ])
   }
 
-  Void verifyReq(Str s, Str method, Uri uri, Str:Str headers)
+  Void verifyReq(Str s, Str method, Uri uri, [Str:Str] headers)
   {
   /*
     req := WispReq.makeTest(s.in)

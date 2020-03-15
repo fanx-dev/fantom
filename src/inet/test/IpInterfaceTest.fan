@@ -18,7 +18,7 @@ class IpInterfaceTest : Test
   Void testList()
   {
     list := IpInterface.list
-    verifyEq(list.typeof, IpInterface[]#)
+    verifyIsType(list, IpInterface[]#)
     verifyEq(list.isEmpty, false)
     list.each |x| { verifyEq(x, x) }
   }

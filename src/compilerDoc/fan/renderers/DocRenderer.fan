@@ -164,6 +164,7 @@ abstract class DocRenderer
       // report each error
       parser.errs.each |err|
       {
+        err.trace
         env.err(err.msg, DocLoc(loc.file, loc.line + err.line - 1))
       }
 

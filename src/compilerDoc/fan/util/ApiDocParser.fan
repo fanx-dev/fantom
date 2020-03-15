@@ -90,7 +90,7 @@ internal class ApiDocParser
     // "-- " <name> <sp> <type> [":=" <expr>]
     // "-- " <name> "(" <nl> [<param> <nl>]* ")" <return>
     if (!cur.startsWith("-- ")) throw Err("Expected -- <name>")
-    if (cur[-1] == '(')
+    if (cur[cur.size-1] == '(')
       return parseMethod
     else
       return parseField
@@ -122,10 +122,10 @@ internal class ApiDocParser
     while (cur[0] != ')')
     {
       sp    := cur.index(" ")
-      defi  := cur.index(":=", sp+1)
+      defi_  := cur.index(":=", sp+1)
       pname := cur[0..<sp]
-      type  := cur[sp+1 ..< (defi ?: cur.size)]
-      def   := defi == null ? null : cur[defi+2..-1]
+      type  := cur[sp+1 ..< (defi_ ?: cur.size)]
+      def   := defi_ == null ? null : cur[defi_+2..-1]
       params.add(DocParam(DocTypeRef(type), pname, def))
       consumeLine
     }
@@ -195,15 +195,15 @@ internal class ApiDocParser
   {
     if (!cur.startsWith("@")) return null
 
-    complex := cur[-1] == '{'
+    complex := cur[cur.size-1] == '{'
     type := DocTypeRef(cur[1..(complex ? -2 : -1)])
     fields := DocFacet.noFields
 
     consumeLine
     if (complex)
     {
-      fields = Str:Str[:]
-      fields.ordered = true
+      fields = OrderedMap<Str,Str>()//[:]
+      //fields.ordered = true
       while (cur != "}")
       {
         eq := cur.index("=")
@@ -253,8 +253,8 @@ internal class DocAttrs
   DocLoc loc := DocLoc.unknown
   DocLoc docLoc := DocLoc.unknown
   Int? setterFlags
-  DocTypeRef[] base   := DocTypeRef#.emptyList
-  DocTypeRef[] mixins := DocTypeRef#.emptyList
-  DocFacet[] facets   := DocFacet#.emptyList
+  DocTypeRef[] base   := List.defVal//DocTypeRef#.emptyList
+  DocTypeRef[] mixins := List.defVal//DocTypeRef#.emptyList
+  DocFacet[] facets   := List.defVal//DocFacet#.emptyList
   DocFandoc? doc
 }

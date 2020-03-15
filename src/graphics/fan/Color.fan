@@ -100,7 +100,7 @@ const class Color
   **   Color.fromStr("#88AA00")
   **   Color.fromStr("rgba(255, 0, 0, 0.3)")
   **   Color.fromStr("rgb(100% 0% 0% 25%)")
-  static new fromStr(Str s, Bool checked := true)
+  static Color? fromStr(Str s, Bool checked := true)
   {
     try
     {
@@ -295,7 +295,7 @@ const class Color
   override Str toStr()
   {
     if (a >= 1.0f) return toHexStr
-    aStr := a.toLocale("0.##", Locale.en)
+    aStr := a.toLocale("0.##")
     return "rgba($r,$g,$b,$aStr)"
   }
 
@@ -400,11 +400,11 @@ const class Color
 // Predefined
 //////////////////////////////////////////////////////////////////////////
 
-  private static const Str:Color byKeyword
+  private static const [Str:Color] byKeyword
   static
   {
     // CSS 1, 2, 3, and 4 keywords
-    acc := Str:Color[:] { caseInsensitive = true }
+    acc := CaseInsensitiveMap<Str,Color>()
     acc["black"] = Color(0x000000)
     acc["silver"] = Color(0xc0c0c0)
     acc["gray"] = Color(0x808080)

@@ -155,7 +155,7 @@ fan.dom.DocPeer.prototype.addCookie = function(self,c)
  * DocOutStream
  ************************************************************************/
 
-fan.dom.DocOutStream = fan.sys.Obj.$extend(fan.sys.OutStream);
+fan.dom.DocOutStream = fan.sys.Obj.$extend(fan.std.OutStream);
 fan.dom.DocOutStream.prototype.$ctor = function(doc) { this.doc = doc; }
 
 fan.dom.DocOutStream.prototype.w = function(v)

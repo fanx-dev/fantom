@@ -30,7 +30,7 @@ using graphics
   }
 
   ** The current list items.
-  Obj[] items := Obj#.emptyList
+  Obj[] items := List.defVal
   {
     set
     {
@@ -105,7 +105,7 @@ using graphics
     {
       find += e.key.code.toChar.lower
       ix := items.findIndex |i| { i.toStr.lower.startsWith(find) }
-      if (ix != null) menu.select(ix)
+      if (ix != -1) menu.select(ix)
     }
   }
 

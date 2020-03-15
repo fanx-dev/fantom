@@ -13,7 +13,7 @@ abstract const class DocTypeRef
 {
 
   ** Constructor from signature string
-  static new fromStr(Str sig, Bool checked := true)
+  static DocTypeRef? fromStr(Str sig, Bool checked := true)
   {
     try
     {
@@ -54,8 +54,8 @@ abstract const class DocTypeRef
   abstract Bool isParameterized()
 
   ** If this a parameterized list or map get value type else null
-  @NoDoc abstract DocTypeRef? v()
-
+  @NoDoc abstract DocTypeRef[]? params()
+/*
   ** If this a parameterized map get key type else null
   @NoDoc abstract DocTypeRef? k()
 
@@ -64,7 +64,7 @@ abstract const class DocTypeRef
 
   ** If this a parameterized func type get return type else null
   @NoDoc abstract DocTypeRef? funcReturn()
-
+*/
   ** Return `signature`
   override final Str toStr() { signature }
 }
@@ -75,23 +75,24 @@ abstract const class DocTypeRef
 
 internal const class BasicTypeRef : DocTypeRef
 {
-  new make(Str qname, Int colons)
+  new make(Str qname, Int colons, DocTypeRef[]? params)
   {
     this.pod   = qname[0..<colons]
     this.name  = qname[colons+2..-1]
     this.qname = qname
+    this.params = params
+    this.signature = qname
   }
+
   override const Str pod
   override const Str name
   override const Str qname
-  override Str signature() { qname }
+  override const Str signature
+
   override Str dis() { name }
   override Bool isNullable() { false }
-  override Bool isParameterized() { false }
-  override DocTypeRef? v() { null }
-  override DocTypeRef? k() { null }
-  override DocTypeRef[]? funcParams() { null }
-  override DocTypeRef? funcReturn() { null }
+  override Bool isParameterized() { params != null && params.size > 0 }
+  override const DocTypeRef[]? params
 }
 
 **************************************************************************
@@ -109,12 +110,9 @@ internal const class NullableTypeRef : DocTypeRef
   override Str dis() { "${base.dis}?" }
   override Bool isNullable() { true }
   override Bool isParameterized() { base.isParameterized }
-  override DocTypeRef? v() { base.v }
-  override DocTypeRef? k() { base.k }
-  override DocTypeRef[]? funcParams() { base.funcParams }
-  override DocTypeRef? funcReturn() { base.funcReturn }
+  override DocTypeRef[]? params() { base.params }
 }
-
+/*
 **************************************************************************
 ** ListTypeRef
 **************************************************************************
@@ -192,7 +190,7 @@ internal const class FuncTypeRef : DocTypeRef
   override const DocTypeRef[]? funcParams
   override const DocTypeRef? funcReturn
 }
-
+*/
 **************************************************************************
 ** DocTypeRefParser
 **************************************************************************
@@ -227,7 +225,7 @@ internal class DocTypeRefParser
   private DocTypeRef parseAny()
   {
     DocTypeRef? t
-
+    /*
     // |...| is function
     if (cur == '|')
       t = parseFunc
@@ -252,6 +250,7 @@ internal class DocTypeRefParser
 
     // otherwise must be basic[]
     else
+    */
       t = parseBasic
 
     // nullable and []
@@ -263,17 +262,19 @@ internal class DocTypeRefParser
         t = NullableTypeRef(t)
       }
 
+      /*
       if (cur == '[')
       {
         consume('[')
         consume(']')
         t = ListTypeRef(t)
       }
+      */
     }
 
     return t
   }
-
+/*
   private DocTypeRef parseMap()
   {
     consume('[')
@@ -304,7 +305,7 @@ internal class DocTypeRefParser
 
     return FuncTypeRef(params, ret)
   }
-
+*/
   private DocTypeRef parseBasic()
   {
     // pod
@@ -320,7 +321,26 @@ internal class DocTypeRefParser
     while (cur == '[') consume
     while (isIdChar(cur)) consume
 
-    return BasicTypeRef(sig[start..<pos], colons)
+    end := pos
+    DocTypeRef[]? params := null
+    if (cur == '<') {
+      consume
+      params = DocTypeRef[,]
+      while (cur != '>') {
+        p := parseAny
+        params.add(p)
+
+        if (cur == ',') {
+          consume
+        }
+      }
+      if (cur == '>') {
+        consume
+      }
+    }
+
+    //echo("======$sig => ${sig[start..<end]} < $buf >")
+    return BasicTypeRef(sig[start..<end], colons, params)
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -337,7 +357,7 @@ internal class DocTypeRefParser
 
   private static Bool isIdChar(Int ch)
   {
-    ch.isAlphaNum || ch == '_'
+    ch.isAlphaNum || ch == '_' || ch == '^'
   }
 
   private ParseErr err()

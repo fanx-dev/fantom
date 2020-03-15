@@ -20,8 +20,8 @@ abstract class DomkitTest : Box
   }
 
   ** List of colors we can use for test cases.
-  static const Str:Str colors := [:] {
-    it.ordered = true
+  static const [Str:Str] colors := OrderedMap<Str,Str>() {
+    //it.ordered = true
     it["red"]        = "#e74c3c"
     it["darkRed"]    = "#c0392b"
     it["orange"]     = "#e67e22"

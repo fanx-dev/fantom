@@ -10,7 +10,7 @@
 ** WebOutStream provides methods for generating XML and XHTML content.
 **
 @Js
-class WebOutStream : OutStream
+class WebOutStream : ProxyOutStream
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -790,7 +790,7 @@ class WebOutStream : OutStream
   This esc(Obj? obj)
   {
     if (obj == null) return w("null")
-    return writeXml(obj.toStr, xmlEscQuotes)
+    return XmlUtil.writeXml(this, obj.toStr, XmlUtil.xmlEscQuotes)
   }
 
 //////////////////////////////////////////////////////////////////////////

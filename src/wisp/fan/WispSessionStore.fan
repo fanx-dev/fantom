@@ -28,7 +28,7 @@ const mixin WispSessionStore
   abstract Str:Obj? load(Str id)
 
   ** Save the given session map by session id.
-  abstract Void save(Str id, Str:Obj? map)
+  abstract Void save(Str id, [Str:Obj?] map)
 
   ** Delete any resources used by the given session id
   abstract Void delete(Str id)

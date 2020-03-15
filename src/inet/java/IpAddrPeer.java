@@ -10,6 +10,9 @@ package fan.inet;
 import java.io.*;
 import java.net.*;
 import fan.sys.*;
+import fan.std.*;
+import fanx.main.*;
+import fanx.interop.*;
 
 public class IpAddrPeer
 {
@@ -44,7 +47,7 @@ public class IpAddrPeer
     try
     {
       InetAddress[] addr = InetAddress.getAllByName(str);
-      List list = new List(IpAddr.$Type, addr.length);
+      List list = List.make(addr.length);
       for (int i=0; i<addr.length; ++i)
         list.add(make(str, addr[i]));
       return list;
@@ -60,7 +63,7 @@ public class IpAddrPeer
     try
     {
       MemBuf mb = (MemBuf)bytes;
-      InetAddress java = InetAddress.getByAddress(mb.bytes());
+      InetAddress java = InetAddress.getByAddress(Interop.toJavaByteArray(mb));
       return make(java.getHostAddress(), java);
     }
     catch (UnknownHostException e)
@@ -157,7 +160,7 @@ public class IpAddrPeer
 
   public Buf bytes(IpAddr fan)
   {
-    return new MemBuf(java.getAddress());
+    return Interop.toFanBuf(java.getAddress());
   }
 
   public String numeric(IpAddr fan)

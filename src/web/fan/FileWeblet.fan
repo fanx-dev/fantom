@@ -49,7 +49,7 @@ class FileWeblet : Weblet
   **
   virtual DateTime modified()
   {
-    return file.modified.floor(1sec)
+    return DateTime.fromTimePoint(file.modified).floor(1sec)
   }
 
   **
@@ -61,7 +61,7 @@ class FileWeblet : Weblet
   **
   virtual Str etag()
   {
-    return "\"" + file.size.toHex + "-" + file.modified.ticks.toHex + "\""
+    return "\"" + file.size.toHex + "-" + file.modified.toMillis.toHex + "\""
   }
 
   **

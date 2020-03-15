@@ -112,7 +112,7 @@ abstract class WebRes
   **
   ** Map of HTTP status codes to status messages.
   **
-  static const Int:Str statusMsg :=
+  static const [Int:Str] statusMsg :=
   [
     // 100
     100: "Continue",

@@ -223,7 +223,7 @@ using concurrent
       (0..<scanLineLen).each |i|
       {
         // None
-        if (0 == filter) return pixels.write(data.read)
+        if (0 == filter) { pixels.out.write(data.read); return }
 
         byte  := data.read
         col   := (i - (i % pixelBytes)) / pixelBytes

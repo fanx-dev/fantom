@@ -13,7 +13,7 @@ const class DocFacet
 {
 
   ** Constructor
-  internal new make(DocTypeRef type, Str:Str fields)
+  internal new make(DocTypeRef type, [Str:Str] fields)
   {
     this.type   = type
     this.fields = fields
@@ -23,7 +23,7 @@ const class DocFacet
   const DocTypeRef type
 
   ** Map of name:expr pairs for field definitions
-  const Str:Str fields
+  const [Str:Str] fields
 
   override Str toStr()
   {
@@ -38,5 +38,5 @@ const class DocFacet
     return s.toStr
   }
 
-  internal static const Str:Str noFields := [:]
+  internal static const [Str:Str] noFields := [:]
 }

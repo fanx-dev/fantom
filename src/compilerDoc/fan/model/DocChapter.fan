@@ -50,7 +50,7 @@ const class DocChapter : Doc
     this.meta = meta
   }
 
-  private Void buildHeadingsTree(DocPodLoader loader, Heading[] fandoc, DocHeading[] top, Str:DocHeading map)
+  private Void buildHeadingsTree(DocPodLoader loader, Heading[] fandoc, DocHeading[] top, [Str:DocHeading] map)
   {
     // if no headings just bail
     if (fandoc.isEmpty) return
@@ -127,7 +127,7 @@ const class DocChapter : Doc
   const DocLoc loc
 
   ** Fandoc heating metadata
-  const Str:Str meta
+  const [Str:Str] meta
 
   ** Chapter contents as Fandoc string
   const DocFandoc doc
@@ -162,7 +162,7 @@ const class DocChapter : Doc
   ** Return qname
   override Str toStr() { qname }
 
-  private const Str:DocHeading headingMap
+  private const [Str:DocHeading] headingMap
 
   ** Index the chapter name and body
   override Void onCrawl(DocCrawler crawler)

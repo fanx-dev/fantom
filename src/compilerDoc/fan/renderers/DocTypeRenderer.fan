@@ -231,11 +231,21 @@ class DocTypeRenderer : DocRenderer
     out.liEnd.ulEnd
 
     // slot list
-    out.h3.w("Slots").h3End
+    out.h3.w("Static Slots").h3End
     out.ul
     type.slots.each |slot|
     {
-      out.li.a(`#$slot.name`).w(slot.name).aEnd.liEnd
+      if (slot.isStatic)
+        out.li.a(`#$slot.name`).w(slot.name).aEnd.liEnd
+    }
+    out.ulEnd
+
+    out.h3.w("Instance Slots").h3End
+    out.ul
+    type.slots.each |slot|
+    {
+      if (!slot.isStatic)
+        out.li.a(`#$slot.name`).w(slot.name).aEnd.liEnd
     }
     out.ulEnd
   }
@@ -247,6 +257,7 @@ class DocTypeRenderer : DocRenderer
   ** Write the given type ref as a hyperlink
   virtual Void writeTypeRef(DocTypeRef ref, Bool full := false)
   {
+    /*
     if (ref.isParameterized)
     {
       if (ref.qname == "sys::List")
@@ -283,6 +294,7 @@ class DocTypeRenderer : DocRenderer
     }
     else
     {
+      */
       // make link by hand to avoid having to resolve
       // every type to a full fledged Doc instance
       uri := StrBuf()
@@ -292,10 +304,20 @@ class DocTypeRenderer : DocRenderer
       if (uriExt != null) uri.add(uriExt)
 
       out.a(uri.toStr.toUri)
-         .w(full ? ref.qname : ref.name)
-         .w(ref.isNullable ? "?" : "")
-         .aEnd
-    }
+      out.w(full ? ref.qname : ref.name)
+
+      if (ref.isParameterized) {
+        out.esc("<")
+        ref.params.each |p, i| {
+          if (i > 0) out.w(",")
+          writeTypeRef(p)
+        }
+        out.esc(">")
+      }
+
+      out.w(ref.isNullable ? "?" : "")
+      .aEnd
+    //}
   }
 
   ** Write the given facet.

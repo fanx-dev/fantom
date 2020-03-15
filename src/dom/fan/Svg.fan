@@ -150,7 +150,7 @@ final const class Svg
   }
 
   // TODO: just keep a big whitelist here??
-  private static const Str:Str camelMap := Str:Str[:].setList([
+  private static const [Str:Str] camelMap := Str:Str[:].setList([
     "accentHeight",
     "alignmentBaseline",
     "baselineShift",

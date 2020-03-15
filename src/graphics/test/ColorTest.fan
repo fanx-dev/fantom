@@ -59,7 +59,7 @@ class ColorTest : Test
     verifyEq(c.a, a)
     verifyEq(c.toStr, s)
     verifyEq(c, Color.fromStr(c.toStr))
-    verifyEq(c, Buf().writeObj(c).flip.readObj)
+    verifyEq(c, Buf() { out.writeObj(c) }.flip.in.readObj)
     verifyEq(c, Color.makeRgb(r, g, b, a))
   }
 

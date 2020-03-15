@@ -30,11 +30,13 @@ class DocTopIndexRenderer : DocRenderer
     out.div("class='index'")
 
     // manuals
+    /*
     out.div("class='manuals'")
     out.h2.w("Manuals").h2End
     writeManuals(index.pods.findAll |p| { p.isManual })
     out.divEnd
-
+    */
+    
     // apis
     out.div("class='apis'")
     out.h2.w("APIs").h2End

@@ -28,7 +28,7 @@ const class RouteMod : WebMod
   ** Map of URI path names to sub-WebMods.  The name "index"
   ** is used for requests to the RouteMod itself.
   **
-  const Str:WebMod routes := Str:WebMod[:]
+  const [Str:WebMod] routes := Str:WebMod[:]
 
   override Void onService()
   {

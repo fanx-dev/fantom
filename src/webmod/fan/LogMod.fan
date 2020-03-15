@@ -119,7 +119,7 @@ const class LogMod : WebMod
 // Formatters
 //////////////////////////////////////////////////////////////////////////
 
-  internal static const Str:Method formatters :=
+  internal static const [Str:Method] formatters :=
   [
     "date":         #formatDate,
     "time":         #formatTime,

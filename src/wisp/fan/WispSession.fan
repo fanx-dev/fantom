@@ -11,7 +11,7 @@ using concurrent
 
 internal class WispSession : WebSession
 {
-  new make(Str name, Str id, Str:Obj? map) { this.name = name; this.id = id; this.map = map }
+  new make(Str name, Str id, [Str:Obj?] map) { this.name = name; this.id = id; this.map = map }
 
   const Str name
 

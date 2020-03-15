@@ -102,7 +102,7 @@ abstract class WebReq
       if (!it.isDir) throw ArgErr("modBase must end in slash");
       if (it.path.size > uri.path.size) throw ArgErr("modBase ($it) is not slice of uri ($uri)");
       &modBase = it
-      modRelVal = uri[it.path.size..-1]
+      modRelVal = uri.relTo(&modBase)//[it.path.size..-1]
     }
   }
 
@@ -232,7 +232,7 @@ abstract class WebReq
   ** the part's form name, headers, and an input stream used to read the
   ** part's body.
   **
-  Void parseMultiPartForm(|Str formName, InStream in, Str:Str headers| cb)
+  Void parseMultiPartForm(|Str formName, InStream in, [Str:Str] headers| cb)
   {
     mime := MimeType(this.headers["Content-Type"])
     if (mime.subType != "form-data") throw Err("Invalid content-type: $mime")

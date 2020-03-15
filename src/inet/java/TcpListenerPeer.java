@@ -13,6 +13,9 @@ import java.util.*;
 import java.security.*;
 import javax.net.ssl.*;
 import fan.sys.*;
+import fan.std.*;
+import fanx.main.*;
+import fanx.interop.*;
 
 public class TcpListenerPeer
   extends ServerSocket
@@ -283,7 +286,7 @@ public class TcpListenerPeer
     {
       int timeout = getSoTimeout();
       if (timeout <= 0) return null;
-      return Duration.makeMillis(timeout);
+      return Duration.fromMillis(timeout);
     }
     catch (IOException e)
     {
@@ -298,7 +301,7 @@ public class TcpListenerPeer
       if (v == null)
         setSoTimeout(0);
       else
-        setSoTimeout((int)(v.millis()));
+        setSoTimeout((int)(v.toMillis()));
     }
     catch (IOException e)
     {

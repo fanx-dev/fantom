@@ -6,7 +6,7 @@
 //   8 Mar 2016  Andy Frank  Creation
 //
 
-using web
+//using web
 
 **************************************************************************
 ** MutationObserver
@@ -31,7 +31,7 @@ class MutationObserver
   **  - "attrOldVal": 'true' to capture attribute value before mutation (requires "attrs":'true')
   **  - "charDataOldVal": 'true' to capture target's data before mutation (requires "charData":'true')
   **  - "attrFilter": Str[] whitelist of attribute names to observe (requires "attrs":'true')
-  native This observe(Elem target, Str:Obj opts)
+  native This observe(Elem target, [Str:Obj] opts)
 
   ** Empties this observers's record queue and returns what was in there.
   native MutationRec[] takeRecs()

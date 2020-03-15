@@ -28,7 +28,7 @@ internal class WispReq : WebReq
   override Version version := nullVersion
   override IpAddr remoteAddr() { return socket.remoteAddr }
   override Int remotePort() { return socket.remotePort }
-  override Str:Str headers := nullHeaders
+  override [Str:Str] headers := nullHeaders
   override Uri uri := ``
   override once Uri absUri()
   {
@@ -55,7 +55,7 @@ internal class WispReq : WebReq
   override TcpSocket socket
 
   static const Version nullVersion := Version("0")
-  static const Str:Str nullHeaders := Str:Str[:]
+  static const [Str:Str] nullHeaders := Str:Str[:]
 
   internal WispService service
   internal InStream? webIn

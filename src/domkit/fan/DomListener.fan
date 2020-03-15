@@ -137,7 +137,7 @@ using graphics
     elem.children.each |c| { findRegNodes(c, list) }
   }
 
-  private Int checkFreq := 1sec.ticks
+  private Int checkFreq := 1sec.toNanos
   private Int? lastTicks
 
   private MutationObserver observer

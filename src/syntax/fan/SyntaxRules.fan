@@ -30,7 +30,7 @@ const class SyntaxRules
     if (ruleName == null) return null
     file := Env.cur.findFile(`etc/syntax/syntax-${ruleName}.fog`, false)
     if (file == null) return null
-    return file.readObj
+    return file.in.readObj
   }
 
   **

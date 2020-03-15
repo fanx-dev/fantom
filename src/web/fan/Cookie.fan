@@ -24,7 +24,7 @@ const class Cookie
   **
   ** Throw ParseErr or return null if not formatted correctly.
   **
-  static new fromStr(Str s, Bool checked := true)
+  static Cookie? fromStr(Str s, Bool checked := true)
   {
     try
     {
@@ -184,7 +184,7 @@ const class Cookie
       // we need to use Max-Age *and* Expires since many browsers
       // such as Safari and IE still don't recognize max-age
       s.add(";Max-Age=").add(maxAge.toSec)
-      if (maxAge.ticks <= 0)
+      if (maxAge.toMillis <= 0)
         s.add(";Expires=").add("Sat, 01 Jan 2000 00:00:00 GMT")
       else
         s.add(";Expires=").add((DateTime.nowUtc+maxAge).toHttpStr)
