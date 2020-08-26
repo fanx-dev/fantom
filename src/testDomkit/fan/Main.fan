@@ -35,7 +35,7 @@ const class DomkitTestMod : WebMod
   new make(|This| f)
   {
     f(this)
-    pods := [typeof.pod]
+    pods := [this.typeof.pod]
     this.jsPack  = FilePack(FilePack.toAppJsFiles(pods))
     this.cssPack = FilePack(FilePack.toAppCssFiles(pods))
   }

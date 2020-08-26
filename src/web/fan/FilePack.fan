@@ -34,7 +34,7 @@ const class FilePack : Weblet
   {
     // calculate buffer size to avoid resizes assuming 25% gzip compression
     totalSize := 0
-    files.each |f| { totalSize += f.size ?: 0 }
+    files.each |f| { totalSize += f.size }
     buf := Buf(totalSize/4)
 
     // derive mime type from file ext (assume they are all the same)
@@ -125,7 +125,7 @@ const class FilePack : Weblet
       while (true)
       {
         n := in.readBuf(buf.clear, chunkSize)
-        if (n == null) break
+        if (n == -1) break
         if (n > 0) lastIsNewline = buf[-1] == '\n'
         out.writeBuf(buf.flip, buf.remaining)
       }

@@ -339,7 +339,7 @@ class WebClient
   ** writes all form data before reading response). Should primarily be used for POST
   ** and PATCH requests.
   **
-  This writeForm(Str method, Str:Str form)
+  This writeForm(Str method, [Str:Str] form)
   {
     if (reqHeaders["Expect"] != null) throw UnsupportedErr("'Expect' header")
     body := Uri.encodeQuery(form)

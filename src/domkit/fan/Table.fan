@@ -1067,7 +1067,7 @@ using graphics
     }
 
     // else bubble up to callback
-    if (e.type == "keydown") return cbKeyDown?.call(e)
+    if (e.type == "keydown") { cbKeyDown?.call(e); return }
   }
 
   @NoDoc Void updateSel(Int[] newsel)
