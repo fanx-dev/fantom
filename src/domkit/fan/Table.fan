@@ -44,7 +44,10 @@ using graphics
     // manually track focus so we can detect when
     // the browser window becomes unactive while
     // maintaining focus internally in document
-    this.onEvent("focus", false) |e| { manFocus=true;  refresh }
+// TODO FIXIT: we need the timeout so that events can
+// properaly bubble before refresh potentially replaces
+// the event target (see TableSelection.onUpdate)
+    this.onEvent("focus", false) |e| { manFocus=true;  Win.cur.setTimeout(100ms) { refresh }}
     this.onEvent("blur",  false) |e| { manFocus=false; refresh }
 
     // rebuild if size changes
@@ -92,6 +95,7 @@ using graphics
     view.sort(col, dir)
     model.onSort(col, dir)
     refresh
+    cbSort?.call(this)
   }
 
   ** Scroll to the given row and column in table.  Pass 'null' to
@@ -157,6 +161,13 @@ using graphics
 
   ** Callback when row is double-clicked.
   Void onAction(|This| f) { cbAction = f }
+
+  ** Callback when table is sorted by a column
+  Void onSort(|This| f) { cbSort = f }
+
+  ** Callback when a key is pressed in table.
+  // TODO: need to fix to take |This,Event| arg...
+  @NoDoc Void onKeyDown(|Event| f) { cbKeyDown = f }
 
   ** Callback when a event occurs inside a table cell.
   Void onTableEvent(Str type, |TableEvent| f) { cbTableEvent[type] = f }
@@ -1007,17 +1018,20 @@ using graphics
         if (cur < 0) cur = cur.not - 1
         pre := colx[cur] == scrollx ? cur-1 : cur
         scrollTo(0.max(pre), null)
+        return
 
       case Key.right:
         cur := colx.binarySearch(scrollx)
         if (cur < 0) cur = cur.not - 1
         scrollTo((numCols-1).min(cur+1), null)
+        return
 
       case Key.up:
         if (sel.indexes.isEmpty)
         {
           updateSel([selFirstVis])
           scrollTo(null, firstVisRow)
+          return
         }
         else
         {
@@ -1025,6 +1039,7 @@ using graphics
           prev := pivot - 1
           updateSel([view.rowViewToModel(prev)])
           scrollTo(null, prev)
+          return
         }
 
       case Key.down:
@@ -1032,6 +1047,7 @@ using graphics
         {
           updateSel([selFirstVis])
           scrollTo(null, firstVisRow)
+          return
         }
         else
         {
@@ -1039,6 +1055,7 @@ using graphics
           next := pivot + 1
           updateSel([view.rowViewToModel(next)])
           scrollTo(null, next)
+          return
         }
     }
 
@@ -1048,6 +1065,9 @@ using graphics
       cbAction?.call(this)
       return
     }
+
+    // else bubble up to callback
+    if (e.type == "keydown") return cbKeyDown?.call(e)
   }
 
   @NoDoc Void updateSel(Int[] newsel)
@@ -1083,6 +1103,8 @@ using graphics
   private Func? cbBeforeSelect
   private Func? cbSelect
   private Func? cbAction
+  private Func? cbSort
+  private Func? cbKeyDown
   private Str:Func cbTableEvent := [:]
   private Func? cbHeaderPopup
 
@@ -1314,8 +1336,14 @@ internal const class TablePos
   // }
   override Void onUpdate(Int[] oldIndexes, Int[] newIndexes)
   {
-    oldIndexes.each |i| { if (i < max) view.table.refreshRow(view.rowModelToView(i)) }
-    newIndexes.each |i| { view.table.refreshRow(view.rowModelToView(i)) }
+    // TODO FIXIT: we need this primary for mouse events, so
+    // the event can bubble on things like cmd/ctrl+click on
+    // <a> child nodes, before refreshRow removes the original
+    // node instance
+    Win.cur.setTimeout(100ms) {
+      oldIndexes.each |i| { if (i < max) view.table.refreshRow(view.rowModelToView(i)) }
+      newIndexes.each |i| { view.table.refreshRow(view.rowModelToView(i)) }
+    }
   }
   private TableView view
 }
