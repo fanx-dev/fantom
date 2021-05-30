@@ -148,7 +148,7 @@ const class FilePack : Weblet
     pods = Pod.flattenDepends(pods)
     pods = Pod.orderByDepends(pods)
     files := toPodJsFiles(pods)
-    files.insertAll(1, toEtcJsFiles)
+    files.insertAll(2, toEtcJsFiles)
     return files
   }
 
