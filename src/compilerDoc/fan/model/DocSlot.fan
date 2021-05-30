@@ -39,6 +39,12 @@ abstract const class DocSlot
   ** Flags mask - see `DocFlags`
   const Int flags
 
+  ** Is this a DocField
+  abstract Bool isField()
+
+  ** Is this a DocMethod
+  abstract Bool isMethod()
+
   ** Display name is Type.name
   Str dis() { parent.name + "." + name }
 
@@ -94,6 +100,12 @@ const class DocField : DocSlot
   ** Flags for setting method if different from overall field level
   ** flags, otherwise null.
   const Int? setterFlags
+
+  ** Return true
+  override Bool isField() { true }
+
+  ** Return false
+  override Bool isMethod() { false }
 }
 
 **************************************************************************
@@ -119,6 +131,12 @@ const class DocMethod : DocSlot
 
   ** Parameters of the method
   const DocParam[] params
+
+  ** Return false
+  override Bool isField() { false }
+
+  ** Return true
+  override Bool isMethod() { true }
 }
 
 **************************************************************************

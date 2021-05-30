@@ -54,6 +54,16 @@ abstract class DocNode
   abstract Void write(DocWriter out)
 
   **
+  ** Is this an inline versus a block node.
+  **
+  abstract Bool isInline()
+
+  **
+  ** Is this a block element versus an inline element.
+  **
+  Bool isBlock() { return !isInline }
+
+  **
   ** Debug dump to output stream.
   **
   Void dump(OutStream out := Env.cur.out)
@@ -116,7 +126,7 @@ abstract class DocNode
   **
   ** Get all the DocText children as a string
   **
-  internal abstract Str toText()
+  abstract Str toText()
 }
 
 **************************************************************************
@@ -140,9 +150,11 @@ class DocText : DocNode
     out.text(this)
   }
 
-  internal override Str toText() { str }
+  override Bool isInline() { true }
 
-  override Str toStr() { return str }
+  override Str toText() { str }
+
+  override Str toStr() { str }
 
   Str str
 }
@@ -163,16 +175,6 @@ abstract class DocElem : DocNode
   ** Get the HTML element name to use for this element.
   **
   abstract Str htmlName()
-
-  **
-  ** Is this an inline versus a block element.
-  **
-  abstract Bool isInline()
-
-  **
-  ** Is this a block element versus an inline element.
-  **
-  Bool isBlock() { return !isInline }
 
   **
   ** Write this element and its children to the specified DocWriter.
@@ -200,6 +202,11 @@ abstract class DocElem : DocNode
   ** Get a readonly list of this elements's children.
   **
   DocNode[] children() { return kids.ro }
+
+  **
+  ** Iterate the children nodes
+  **
+  Void eachChild(|DocNode| f) { kids.each(f) }
 
   @Deprecated { msg = "Use add()" }
   This addChild(DocNode node) { add(node) }
@@ -284,7 +291,7 @@ abstract class DocElem : DocNode
   **
   ** Get all the DocText children as a string
   **
-  internal override Str toText()
+  override Str toText()
   {
     s := StrBuf()
     kids.each |kid| { s.join(kid.toText, " ") }
@@ -587,6 +594,7 @@ class Image : DocElem
   Str uri
   Str alt
   Str? size  // formatted {w}x{h}
+  Int line
 }
 
 **************************************************************************

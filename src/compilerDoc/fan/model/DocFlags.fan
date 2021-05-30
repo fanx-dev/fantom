@@ -31,13 +31,17 @@ final const class DocFlags
   const static Int Storage    := 0x00010000
   const static Int Synthetic  := 0x00020000
   const static Int Virtual    := 0x00040000
+
   const static Int Struct     := 0x00080000
   const static Int Extension  := 0x00100000
   const static Int RtConst    :=0x00200000
   const static Int Readonly   := 0x00400000
   const static Int Async      := 0x00800000
   const static Int Overload   := 0x01000000 //imples param default by Overload
+  const static Int Closure    := 0x02000000
+  const static Int Once       := 0x04000000
   const static Int FlagsMask  := 0x0fffffff
+
 
   static Bool isAbstract (Int flags) { flags.and(DocFlags.Abstract)  != 0 }
   static Bool isConst    (Int flags) { flags.and(DocFlags.Const)     != 0 }
@@ -58,12 +62,15 @@ final const class DocFlags
   static Bool isStorage  (Int flags) { flags.and(DocFlags.Storage)   != 0 }
   static Bool isSynthetic(Int flags) { flags.and(DocFlags.Synthetic) != 0 }
   static Bool isVirtual  (Int flags) { flags.and(DocFlags.Virtual)   != 0 }
+
   static Bool isStruct  (Int flags)       { flags.and(DocFlags.Struct)      != 0 }
   static Bool isExtension  (Int flags)    { flags.and(DocFlags.Extension)   != 0 }
   static Bool isRuntimeConst  (Int flags) { flags.and(DocFlags.RtConst)!= 0 }
   static Bool isReadonly  (Int flags)     { flags.and(DocFlags.Readonly)    != 0 }
   static Bool isAsync  (Int flags)        { flags.and(DocFlags.Async)       != 0 }
   static Bool isOverload  (Int flags)     { flags.and(DocFlags.Overload)    != 0 }
+  static Bool isOnce     (Int flags) { flags.and(DocFlags.Once)      != 0 }
+
 
   static Int fromName(Str name)
   {
